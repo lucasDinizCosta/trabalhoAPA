@@ -1,8 +1,20 @@
 #include <iostream>
 #include <climits>
 
+// TODO:->Fazer o nosso codigo
+// TODO:->Fazer leitura das instancias
+// TODO:->Fazer uma estrutura de arvore
+// TODO:->Escrever numa string a ordem dos parenteses
+
+// TODO:->Fazer o algoritmo comparativo
+// TODO:->executar os testes
+// TODO:->finalizar o relatorio
+
 
 int main (int argc, char* argv[]){
+
+
+    int mats[4] = {1, 2, 3, 4}
 
     int n = 5;
     int p[] = {5, 4, 6, 2, 7};
@@ -37,6 +49,8 @@ int main (int argc, char* argv[]){
             std::cout << s[h][g] << " ";
         }
     }
+
+
 
     return 0;
 }
