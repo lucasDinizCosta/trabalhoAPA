@@ -25,7 +25,6 @@ int main (int argc, char* argv[]){
 
     for(int i = 0; i < number_matrixes; i++){
 
-        std::cout << lines << "|" << columns << std::endl;
         line = line + std::to_string(lines) + "," + std::to_string(columns) + "\n";
         
         /*std::string line;
