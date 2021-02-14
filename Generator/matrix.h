@@ -2,35 +2,35 @@
 #define MATRIX_INCLUDED
 
 
-class Matrix{
+// class Matrix{
 
-private:
+// private:
     
-    int num_lines;
-    int num_columns;
+//     int num_lines;
+//     int num_columns;
 
-public:
+// public:
 
-    ///Construtor
-    Matrix::Matrix(int _num_lines, int _num_columns){
+//     ///Construtor
+//     Matrix::Matrix(int _num_lines, int _num_columns){
 
-        num_lines = _num_lines;
-        num_columns = _num_columns;
+//         num_lines = _num_lines;
+//         num_columns = _num_columns;
 
-    }
+//     }
 
-    ///Destrutor
-    Matrix::~Matrix(){
+//     ///Destrutor
+//     Matrix::~Matrix(){
 
-    }
+//     }
 
-    int Matrix::get_D(){
+//     int Matrix::get_D(){
 
-        return d;
-    }
+//         return d;
+//     }
 
 
-};
+// };
 
 
 #endif MATRIX_INCLUDED
