@@ -1,5 +1,7 @@
 #include <iostream>
 #include <climits>
+#include <string>
+#include "node.h"
 
 // TODO:->Fazer o nosso codigo
 // TODO:->Fazer leitura das instancias
@@ -8,13 +10,53 @@
 
 // TODO:->Fazer o algoritmo comparativo
 // TODO:->executar os testes
-// TODO:->finalizar o relatorio
+// TODO:->finalizar o relatorio 
 
+void imprimeNo(std::string msg, int b) {
+
+    for (int i = 0; i < b; i++){
+        printf("   ");
+    }
+
+    std::cout << msg << std::endl;
+}
+
+void mostraArvore(Node* a, int b) {
+
+    if (a == NULL) {
+        imprimeNo("*", b);
+        return;
+    }
+
+    mostraArvore(a->getRight(), b+1);
+
+    std::string valNode = std::to_string(a->getStart()) + "-" + std::to_string(a->getEnd());
+
+    imprimeNo(valNode, b);
+    
+    mostraArvore(a->getLeft(), b+1);
+}
+
+void exemplo_arvore(){
+
+    Node* root = new Node(1, 4);
+
+    Node* lf = new Node(1, 2);
+
+    Node* rt = new Node(3, 3);
+
+    root->setLeft(lf);
+
+    root->setRight(rt);
+
+    std::cout  << "\n\nImpressão da Árvore (de lado):" << std::endl   << std::endl;
+
+    mostraArvore(root, 0);
+}
 
 int main (int argc, char* argv[]){
 
-
-    int mats[4] = {1, 2, 3, 4}
+    int mats[4] = {1, 2, 3, 4};
 
     int n = 5;
     int p[] = {5, 4, 6, 2, 7};
@@ -50,7 +92,8 @@ int main (int argc, char* argv[]){
         }
     }
 
-
+    // Exemplo para instanciar uma arvore e imprimi-la
+    exemplo_arvore();
 
     return 0;
 }
