@@ -5,13 +5,17 @@
 
 // TODO:->Fazer o nosso codigo
 // TODO:->Fazer leitura das instancias
-// TODO:->Fazer uma estrutura de arvore
+// TODO:->Fazer uma estrutura de arvore - OK
 // TODO:->Escrever numa string a ordem dos parenteses
 
 // TODO:->Fazer o algoritmo comparativo
 // TODO:->executar os testes
 // TODO:->finalizar o relatorio 
 
+
+// Função auxiliar de impressão da árvore. 
+// Recebe como parametro uma string com o que deve ser impresso
+// e um valor inteiro b, que é responsável por aplicar um espaçamento de impressão
 void imprimeNo(std::string msg, int b) {
 
     for (int i = 0; i < b; i++){
@@ -21,10 +25,10 @@ void imprimeNo(std::string msg, int b) {
     std::cout << msg << std::endl;
 }
 
+// Função recursiva para percorrer a árvore binária.
 void mostraArvore(Node* a, int b) {
 
     if (a == NULL) {
-        imprimeNo("*", b);
         return;
     }
 
@@ -37,17 +41,28 @@ void mostraArvore(Node* a, int b) {
     mostraArvore(a->getLeft(), b+1);
 }
 
+// Instancia uma nova árvore 
 void exemplo_arvore(){
 
     Node* root = new Node(1, 4);
 
-    Node* lf = new Node(1, 2);
+    root->setLeft(new Node(1, 3));
 
-    Node* rt = new Node(3, 3);
+    root->setRight(new Node(4, 4));
 
-    root->setLeft(lf);
+    Node* aux = new Node();
 
-    root->setRight(rt);
+    aux = root->getLeft();
+
+    aux->setLeft(new Node(1, 1));
+
+    aux->setRight(new Node(2, 3));
+
+    aux = aux->getRight();
+
+    aux->setLeft(new Node(2, 2));
+
+    aux->setRight(new Node(3, 3));
 
     std::cout  << "\n\nImpressão da Árvore (de lado):" << std::endl   << std::endl;
 
