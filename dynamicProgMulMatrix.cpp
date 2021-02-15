@@ -103,11 +103,12 @@ int main (int argc, char* argv[]){
         }
         
 
-        std::cout << "Dimensions" << std::endl;
+        std::cout << "\nDimensions: ";
         for (int i = 0; i < dimensions.size(); i++)
         {
             std::cout << dimensions[i] << " - ";
         }
+        std::cout << std::endl;
 
         bruteForce(dimensions);
 
