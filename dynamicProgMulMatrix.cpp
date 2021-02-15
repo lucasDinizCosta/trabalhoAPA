@@ -14,6 +14,30 @@
 // TODO:->finalizar o relatorio
 
 
+void bruteForce(std::vector<int> dimensions){
+    int minOperation = INT_MAX;
+    int totalOperations = 0;
+    int operationsNow = 0;
+    int index = 0;
+
+    std::cout << "\n----- EXECUTING BRUTE FORCE -----" << std::endl;
+    while(dimensions.size() > 2){
+        for (int i = 1; i < dimensions.size() - 1; i++)
+        {
+            operationsNow = dimensions[i - 1] * dimensions[i] * dimensions[i + 1];
+            if(operationsNow < minOperation){
+                minOperation = operationsNow;
+                index = i;
+            }
+        }
+        dimensions.erase(dimensions.begin()+index);
+        totalOperations = totalOperations + minOperation;
+        minOperation = INT_MAX;
+    }
+    
+    std::cout << "Total Operations: " << totalOperations << std::endl;
+}
+
 int main (int argc, char* argv[]){
 
 
@@ -79,9 +103,15 @@ int main (int argc, char* argv[]){
         }
         
 
+        std::cout << "Dimensions" << std::endl;
+        for (int i = 0; i < dimensions.size(); i++)
+        {
+            std::cout << dimensions[i] << " - ";
+        }
+
+        bruteForce(dimensions);
 
     }
-
-    
     return 0;
 }
+
