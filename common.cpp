@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <queue>
 #include "common.h"
 
 void initMatrixes( int** &opMatriz, int** &locParentesis, int size){
@@ -78,14 +79,37 @@ void mostraArvore(Node* a, int b) {
         return;
     }
 
+    std::string valNode = std::to_string(a->getStart()) + "-" + std::to_string(a->getEnd());
+    std::cout << valNode << " ";
+
     mostraArvore(a->getRight(), b+1);
 
-    std::string valNode = std::to_string(a->getStart()) + "-" + std::to_string(a->getEnd());
-
-    imprimeNo(valNode, b);
+    //imprimeNo(valNode, b);
 
     mostraArvore(a->getLeft(), b+1);
 }
+
+void buscaLargura() { 
+
+        // std::queue<Node*> q;
+        // q.push(raiz_);  
+
+        // while (q.size() > 0)
+        // {
+        //     no* n = q.front();
+        //     q.pop();
+        //     std::cout << n->v << " ";
+
+        //     if (n->esquerda !=nullptr) {
+        //             q.push(n->esquerda);
+        //     }
+        //     if (n->direita !=nullptr) {
+        //         q.push(n->direita);
+        //     }
+        // }
+
+        // std::cout << std::endl;
+    }   
 
 // Instancia uma nova árvore
 void exemplo_arvore(){
@@ -112,5 +136,54 @@ void exemplo_arvore(){
 
     std::cout  << "\n\nImpressao da Arvore (de lado):" << std::endl   << std::endl;
 
-    mostraArvore(root, 0);
+    std::queue<Node*> q;
+    q.push(root);  
+    int level = 0;
+
+    while (q.size() > 0)
+    {   
+        
+
+        Node* n = q.front();
+        q.pop();
+        std::string valNode = std::to_string(n->getStart()) + "-" + std::to_string(n->getEnd());
+        std::cout << valNode << " ";
+
+        if (n->getLeft() !=nullptr) {
+                q.push(n->getLeft());
+        }
+        if (n->getRight() !=nullptr) {
+            q.push(n->getRight());
+        }
+    }
+
+    std::cout << std::endl;
+
+
+    //mostraArvore(root, 0);
+}
+
+int recursiveAlgo(int** &opMatriz, std::vector<int> &p, int i, int j){
+
+    int q1;
+    int q2;
+    int q;
+
+    if(i == j)
+        return 0;
+    
+    opMatriz[i][j] = INT_MAX;
+    
+    for (int k = i; k <= j - 1; k++){
+        q1 = recursiveAlgo(opMatriz, p, i, k);
+        q2 = recursiveAlgo(opMatriz, p, k+1, j);
+        q = q1 + p[i-1]*p[k]*p[j] + q2;
+        
+        if(q < opMatriz[i][j])
+            opMatriz[i][j] = q;
+
+    }
+
+    return opMatriz[i][j];
+
 }

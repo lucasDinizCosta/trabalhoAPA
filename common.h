@@ -2,10 +2,14 @@
 #define COMMON_H_INCLUDED
 
 #include <vector>
+#include <chrono>
+#include <climits>
 #include "node.h"
+
 
 void initMatrixes( int** &opMatriz, int** &locParentesis, int size);
 bool readFile(char* fileName, std::vector<int> &dimensions, int* n);
+int recursiveAlgo(int** &opMatriz, std::vector<int> &p, int i, int j);
 
 // Instancia uma nova árvore
 void exemplo_arvore();
