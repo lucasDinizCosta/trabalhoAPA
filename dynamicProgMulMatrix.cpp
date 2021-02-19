@@ -4,7 +4,6 @@
 
 #include "common.h"
 
-#include "windows.h"
 
 // TODO:->Fazer o nosso codigo
 // TODO:->Fazer leitura das instancias - OK
