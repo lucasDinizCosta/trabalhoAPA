@@ -4,8 +4,6 @@
 
 #include "common.h"
 
-#include "windows.h"
-
 // TODO:->Fazer o nosso codigo
 // TODO:->Fazer leitura das instancias - OK
 // TODO:->Fazer uma estrutura de arvore - OK
@@ -16,6 +14,7 @@
 // TODO:->finalizar o relatorio
 
 int main(int argc, char *argv[]) {
+
      std::vector<int> dimensions;
      int **opMatriz;
      int **locParentesis;
@@ -131,8 +130,7 @@ int main(int argc, char *argv[]) {
                printResults(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
           } else if (std::string(argv[3]) == "2") {
                resultsToCSV(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
-          }
-          else {
+          } else {
                std::cout << "No valid output method choosed. Please, check arguments." << std::endl;
           }
      }
