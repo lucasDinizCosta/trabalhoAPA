@@ -1,5 +1,7 @@
+#include <chrono>
 #include <iostream>
 #include <string>
+
 #include "common.h"
 
 // TODO:->Fazer o nosso codigo
@@ -11,81 +13,124 @@
 // TODO:->executar os testes
 // TODO:->finalizar o relatorio
 
+int main(int argc, char *argv[]) {
+     std::vector<int> dimensions;
+     int **opMatriz;
+     int **locParentesis;
+     int n;
 
+     // Global Variables to store test results:
+     int numIterations = 5;
+     int instanceSize = 0;
+     std::string algorithm = "";
+     int numberOfOp = 0;
+     std::chrono::duration<double> timeSpent;
+     double memorySpent = 0.0;
 
-int main (int argc, char* argv[]){
+     if (argc < 4) {
+          std::cout << "\n- Error: Arguments missing!" << std::endl;
 
-    std::vector<int> dimensions;
-    int **opMatriz;
-    int **locParentesis;
-    int n;       
+          std::cout << "\n- Use the following pattern to run the program properly on Windows:" << std::endl;
 
-    if(argc > 1){
+          std::cout << "\n.\\dynamicProgMulMatrix.exe <path_to_instance_file> <algorithm_code> <print_type>" << std::endl;
 
-        bool wasRead = readFile(argv[1], dimensions, &n);
+          std::cout << "\nWhere:" << std::endl;
 
-        if(wasRead){
+          std::cout << " - Algorithm Code: use 1 for Brute Force and 2 for Dynamic Programming." << std::endl;
+          std::cout << " - Print Type: use 0 for easy terminal reading and 1 for csv output file formatting.\n"
+                    << std::endl;
 
-            initMatrixes(opMatriz, locParentesis, n);
-            std::string str(argv[2]) ;
+          return 0;
+     }
 
-            if(str == "1"){
+     if (argc > 1) {
+          bool wasRead = readFile(argv[1], dimensions, &n);
 
-                clock_t tStart = clock();
-                auto start = std::chrono::steady_clock::now();
-    
-                int numOps = recursiveAlgo(opMatriz, dimensions, 1, n-1);
+          if (wasRead) {
+               initMatrixes(opMatriz, locParentesis, n);
+               std::string str(argv[2]);
 
-                auto end = std::chrono::steady_clock::now();
-                std::chrono::duration<double> elapsed_seconds = end-start;
-                std::cout << "Number of operations = " << numOps << std::endl;
-                std::cout << "Time taken Recursive (chrono): " << elapsed_seconds.count() << std::endl;
-            }
-                
-            else{
+               if (str == "1") {
+                    //std::cout << "\nRunning brute force tests, please wait... \n" << std::endl;
 
-                int j, min, q;
+                    algorithm = "BruteForce";
+                    instanceSize = dimensions.size() - 1;
 
-                clock_t tStart = clock();
-                auto start = std::chrono::steady_clock::now();
+                    clock_t tStart;
+                    std::chrono::duration<double> elapsed_seconds;
 
-                for(int d = 1; d < n-1; d++){
-                    for(int i = 1; i < n-d; i++){
-                        j = i + d;
-                        min = INT_MAX;
+                    for (int i = 0; i < numIterations; i++) {
+                         tStart = clock();
+                         auto start = std::chrono::steady_clock::now();
 
-                        for (int k = i; k <= j-1; k++){
-                            q = opMatriz[i][k] + opMatriz[k+1][j] + dimensions[i-1]*dimensions[k]*dimensions[j];
+                         int numOps = recursiveAlgo(opMatriz, dimensions, 1, n - 1);
 
-                            if(q < min){
-                                min = q;
-                                locParentesis[i][j] = k;
-                            }
-                        }
+                         auto end = std::chrono::steady_clock::now();
+                         elapsed_seconds = end - start;
 
-                        opMatriz[i][j] = min;
+                         numberOfOp += opMatriz[1][n - 1];
+                         timeSpent += elapsed_seconds;
+                         memorySpent += 0.0;
                     }
-                }   
 
-                auto end = std::chrono::steady_clock::now();
-                std::chrono::duration<double> elapsed_seconds = end-start;
+               }
 
-                std::cout << "Number of operations = " << opMatriz[1][n-1] << std::endl;
-                std::cout << "Time taken Dynamic (chrono): " << elapsed_seconds.count() << std::endl;
-            }
+               else if (str == "2") {
+                    // std::cout << "\nRunning dynamic programming tests, please wait...\n" << std::endl;
 
+                    algorithm = "Dynamic Programming";
+                    instanceSize = dimensions.size() - 1;
 
+                    clock_t tStart;
+                    std::chrono::duration<double> elapsed_seconds;
 
-            for(int i = 0; i < n; i++){
-                delete [] opMatriz[i];
-                delete [] locParentesis[i];
-            }
-                delete [] opMatriz;
-                delete [] locParentesis;
-        }
+                    for (int i = 0; i < numIterations; i++) {
+                         int j, min, q;
 
-    }
+                         tStart = clock();
+                         auto start = std::chrono::steady_clock::now();
 
-    return 0;
+                         for (int d = 1; d < n - 1; d++) {
+                              for (int i = 1; i < n - d; i++) {
+                                   j = i + d;
+                                   min = INT_MAX;
+
+                                   for (int k = i; k <= j - 1; k++) {
+                                        q = opMatriz[i][k] + opMatriz[k + 1][j] + dimensions[i - 1] * dimensions[k] * dimensions[j];
+
+                                        if (q < min) {
+                                             min = q;
+                                             locParentesis[i][j] = k;
+                                        }
+                                   }
+
+                                   opMatriz[i][j] = min;
+                              }
+                         }
+
+                         auto end = std::chrono::steady_clock::now();
+                         elapsed_seconds = end - start;
+
+                         numberOfOp += opMatriz[1][n - 1];
+                         timeSpent += elapsed_seconds;
+                         memorySpent += 0.0;
+                    }
+               }
+
+               for (int i = 0; i < n; i++) {
+                    delete[] opMatriz[i];
+                    delete[] locParentesis[i];
+               }
+               delete[] opMatriz;
+               delete[] locParentesis;
+          }
+
+          if (std::string (argv[3]) == "0") {
+               printResults(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
+          } else if (std::string (argv[3]) == "1") {
+               resultsToCSV(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
+          }
+     }
+
+     return 0;
 }
-

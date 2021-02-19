@@ -56,7 +56,8 @@
         "numeric": "cpp",
         "random": "cpp",
         "ratio": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "queue": "cpp"
     },
     "code-runner.executorMap": {
         "cpp": "cd $dir && g++ *.cpp -o $fileNameWithoutExt && $dir$fileNameWithoutExt.exe"
