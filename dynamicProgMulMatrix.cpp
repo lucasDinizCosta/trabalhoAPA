@@ -4,6 +4,8 @@
 
 #include "common.h"
 
+#include "windows.h"
+
 // TODO:->Fazer o nosso codigo
 // TODO:->Fazer leitura das instancias - OK
 // TODO:->Fazer uma estrutura de arvore - OK
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]) {
           std::cout << "\nWhere:" << std::endl;
 
           std::cout << " - Algorithm Code: use 1 for Brute Force and 2 for Dynamic Programming." << std::endl;
-          std::cout << " - Print Type: use 0 for easy terminal reading and 1 for csv output file formatting.\n"
+          std::cout << " - Print Type: use 1 for easy terminal reading and 2 for csv output file formatting.\n"
                     << std::endl;
 
           return 0;
@@ -125,10 +127,13 @@ int main(int argc, char *argv[]) {
                delete[] locParentesis;
           }
 
-          if (std::string (argv[3]) == "0") {
+          if (std::string(argv[3]) == "1") {
                printResults(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
-          } else if (std::string (argv[3]) == "1") {
+          } else if (std::string(argv[3]) == "2") {
                resultsToCSV(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
+          }
+          else {
+               std::cout << "No valid output method choosed. Please, check arguments." << std::endl;
           }
      }
 
