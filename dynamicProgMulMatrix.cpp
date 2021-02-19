@@ -1,6 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <unistd.h>
 
 #include "common.h"
