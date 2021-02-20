@@ -1,4 +1,4 @@
-// #include <unistd.h>
+#include <unistd.h>
 
 #include <chrono>
 #include <fstream>
@@ -56,29 +56,29 @@ struct stop_watch final {
      std::chrono::high_resolution_clock::time_point Start_;
 };
 
-// // Funcao Auxiliar para Calcular Memória Utilizada (Apenas no Linux)
-// void process_mem_usage(double &vm_usage, double &resident_set) {
-//      vm_usage = 0.0;
-//      resident_set = 0.0;
+// Funcao Auxiliar para Calcular Memória Utilizada (Apenas no Linux)
+void process_mem_usage(double &vm_usage, double &resident_set) {
+     vm_usage = 0.0;
+     resident_set = 0.0;
 
-//      // the two fields we want
-//      unsigned long vsize;
-//      long rss;
-//      {
-//           std::string ignore;
-//           std::ifstream ifs("/proc/self/stat", std::ios_base::in);
-//           ifs >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> vsize >> rss;
-//      }
+     // the two fields we want
+     unsigned long vsize;
+     long rss;
+     {
+          std::string ignore;
+          std::ifstream ifs("/proc/self/stat", std::ios_base::in);
+          ifs >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> ignore >> vsize >> rss;
+     }
 
-//      long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024;  // in case x86-64 is configured to use 2MB pages
-//      vm_usage = vsize / 1024.0;
-//      resident_set = rss * page_size_kb;
-// }
+     long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024;  // in case x86-64 is configured to use 2MB pages
+     vm_usage = vsize / 1024.0;
+     resident_set = rss * page_size_kb;
+}
 
 int main(int argc, char *argv[]) {
-     // double vmInit, rssInit;              // Armazena a memória utilizada ao inicio da execucao
-     // double vmEnd, rssEnd;                // Armazena a memória utilizada ao final da execucao
-     // process_mem_usage(vmInit, rssInit);  // Calcula a memoria utilizada e seta no inicio
+     double vmInit, rssInit;              // Armazena a memória utilizada ao inicio da execucao
+     double vmEnd, rssEnd;                // Armazena a memória utilizada ao final da execucao
+     process_mem_usage(vmInit, rssInit);  // Calcula a memoria utilizada e seta no inicio
 
      std::vector<int> dimensions;
      int **opMatriz;
@@ -176,8 +176,8 @@ int main(int argc, char *argv[]) {
                     }
                }
 
-               // process_mem_usage(vmEnd, rssEnd);  // Calcula a memoria utilizada e seta no final
-               // memorySpent = rssEnd - rssInit;    // Calcula a dif de memoria entre o final e no inicio
+               process_mem_usage(vmEnd, rssEnd);  // Calcula a memoria utilizada e seta no final
+               memorySpent = rssEnd - rssInit;    // Calcula a dif de memoria entre o final e no inicio
 
                for (int i = 0; i < n; i++) {
                     delete[] opMatriz[i];
