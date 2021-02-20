@@ -122,10 +122,8 @@ int main(int argc, char *argv[]) {
                     algorithm = "BruteForce";
                     instanceSize = dimensions.size() - 1;
 
-                    clock_t tStart;
-                    std::chrono::duration<double> elapsed_seconds;
-
                     for (int i = 0; i < numIterations; i++) {
+                         
                          stop_watch sw;
 
                          int numOps = recursiveAlgo(opMatriz, dimensions, 1, n - 1);
