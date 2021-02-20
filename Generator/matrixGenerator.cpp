@@ -4,9 +4,11 @@
 #include <stdlib.h>
 #include <string>
 
-
+/*INPUT:
+OUTPUT:
+DESCRIP: Gera um arquivo csv com as dimensões das matrizes geradas aleatoriamente entre 1 - 61*/
 int main (int argc, char* argv[]){
-    
+
     if(argc > 1){
         srand(time(NULL));
         int number_matrixes = atoi(argv[1]);
@@ -28,22 +30,6 @@ int main (int argc, char* argv[]){
         for(int i = 0; i < number_matrixes; i++){
 
             line = line + std::to_string(lines) + "," + std::to_string(columns) + "\n";
-            
-            /*std::string line;
-
-            for(int j = 0; j < lines; j++){
-                
-                line = "";
-
-                for(int k = 0; k < columns; k++){
-                    num = ((rand() % 101) - 50);
-                    line = line + std::to_string(num) + ",";
-                }
-
-                line.erase(line.end()-1);
-                matrix << line + "\n";
-
-            }*/
 
             lines = columns;
             columns = rand() % 61 + 1;

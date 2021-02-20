@@ -1,11 +1,8 @@
-#include "common.h"
-
-#include <fstream>
-#include <iostream>
+#include "libs/common.h"
 #include <queue>
-#include <string>
 
-void initMatrixes(int **&opMatriz, int **&locParentesis, int size) {
+void initMatrixes(int size) {
+     
      opMatriz = new int *[size];
 
      for (int i = 0; i < size; i++)
@@ -67,77 +64,90 @@ void imprimeNo(std::string msg, int b) {
      std::cout << msg << std::endl;
 }
 
-// Função recursiva para percorrer a árvore binária.
-void mostraArvore(Node *a, int b) {
-     if (a == NULL) {
-          return;
-     }
+void delTree(Node* root){
 
-     std::string valNode = std::to_string(a->getStart()) + "-" + std::to_string(a->getEnd());
-     std::cout << valNode << " ";
+     root = free(root);
 
-     mostraArvore(a->getRight(), b + 1);
-
-     //imprimeNo(valNode, b);
-
-     mostraArvore(a->getLeft(), b + 1);
 }
 
-void buscaLargura() {
-     // std::queue<Node*> q;
-     // q.push(raiz_);
+// Função recursiva para percorrer a árvore binária.
+Node* free(Node *p) {
+     
+     if (p != NULL)
+     {
+          p->setLeft( free(p->getLeft()) );
+          p->setRight( free(p->getRight()) );
+          delete p;
+          p = NULL;
+     }
+     
+     return NULL;
+}
 
-     // while (q.size() > 0)
-     // {
-     //     no* n = q.front();
-     //     q.pop();
-     //     std::cout << n->v << " ";
 
-     //     if (n->esquerda !=nullptr) {
-     //             q.push(n->esquerda);
-     //     }
-     //     if (n->direita !=nullptr) {
-     //         q.push(n->direita);
-     //     }
-     // }
+void buildTree(Node* node, int numLeaves, int size){
 
-     // std::cout << std::endl;
+     if(node == NULL)
+          return;
+     
+     Node* aux = node;
+     int i = aux->getStart();
+     int j = aux->getEnd();
+     int value;
+
+
+     if (numLeaves != size){
+     
+          if (i != j){
+
+               value = locParentesis[i][j];
+
+               aux->setLeft(new Node(aux->getStart(), value, aux));
+               aux->setRight(new Node(value + 1, aux->getEnd(), aux));
+
+          }else{
+               aux->setIsLeaf(true);
+               numLeaves++;
+          }
+
+          buildTree(aux->getLeft(), numLeaves, size);
+          buildTree(aux->getRight(), numLeaves, size);
+     }
 }
 
 // Instancia uma nova árvore
-void exemplo_arvore() {
-     Node *root = new Node(1, 4);
+void writeSolution(int size) {
 
-     root->setLeft(new Node(1, 3));
+     int i = 1;
+     int j = size;
+     int numLeaves = 0;
 
-     root->setRight(new Node(4, 4));
+     Node *root = new Node(i, j, true);
+     buildTree(root, numLeaves, size);
 
-     Node *aux = new Node();
 
-     aux = root->getLeft();
-
-     aux->setLeft(new Node(1, 1));
-
-     aux->setRight(new Node(2, 3));
-
-     aux = aux->getRight();
-
-     aux->setLeft(new Node(2, 2));
-
-     aux->setRight(new Node(3, 3));
-
-     std::cout << "\n\nImpressao da Arvore (de lado):" << std::endl
-               << std::endl;
-
+     std::vector<Node *> v;
+     int it = 0;
      std::queue<Node *> q;
      q.push(root);
      int level = 0;
 
      while (q.size() > 0) {
           Node *n = q.front();
+          v.push_back(n);
           q.pop();
-          std::string valNode = std::to_string(n->getStart()) + "-" + std::to_string(n->getEnd());
-          std::cout << valNode << " ";
+
+          if(level == v[it]->getLevel()){
+               std::string valNode = std::to_string(n->getStart()) + "-" + std::to_string(n->getEnd());
+               std::cout << ", " << valNode << "(" << std::to_string(n->getLevel()) << ")" << " ";
+          }else{
+               std::cout << std::endl;
+               std::string valNode = std::to_string(n->getStart()) + "-" + std::to_string(n->getEnd());
+               std::cout << valNode << "(" << std::to_string(n->getLevel()) << ")" << " ";
+               level += 1;
+          }
+               
+          it++;
 
           if (n->getLeft() != nullptr) {
                q.push(n->getLeft());
@@ -147,12 +157,11 @@ void exemplo_arvore() {
           }
      }
 
-     std::cout << std::endl;
 
-     //mostraArvore(root, 0);
+     delTree(root);
 }
 
-int recursiveAlgo(int **&opMatriz, std::vector<int> &p, int i, int j) {
+int recursiveAlgo(std::vector<int> &p, int i, int j) {
      int q1;
      int q2;
      int q;
@@ -163,12 +172,14 @@ int recursiveAlgo(int **&opMatriz, std::vector<int> &p, int i, int j) {
      opMatriz[i][j] = INT_MAX;
 
      for (int k = i; k <= j - 1; k++) {
-          q1 = recursiveAlgo(opMatriz, p, i, k);
-          q2 = recursiveAlgo(opMatriz, p, k + 1, j);
+          q1 = recursiveAlgo(p, i, k);
+          q2 = recursiveAlgo(p, k + 1, j);
           q = q1 + p[i - 1] * p[k] * p[j] + q2;
 
-          if (q < opMatriz[i][j])
+          if (q < opMatriz[i][j]){
                opMatriz[i][j] = q;
+               locParentesis[i][j] = k;
+          }
      }
 
      return opMatriz[i][j];

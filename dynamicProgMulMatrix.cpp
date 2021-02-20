@@ -1,11 +1,4 @@
-// #include <unistd.h>
-
-#include <chrono>
-#include <fstream>
-#include <iostream>
-#include <string>
-
-#include "common.h"
+#include "libs/common.h"
 
 // TODO:->Fazer o nosso codigo
 // TODO:->Fazer leitura das instancias - OK
@@ -75,14 +68,16 @@ struct stop_watch final {
 //      resident_set = rss * page_size_kb;
 // }
 
+int **opMatriz;
+int **locParentesis;
+
 int main(int argc, char *argv[]) {
-     // double vmInit, rssInit;              // Armazena a memória utilizada ao inicio da execucao
-     // double vmEnd, rssEnd;                // Armazena a memória utilizada ao final da execucao
-     // process_mem_usage(vmInit, rssInit);  // Calcula a memoria utilizada e seta no inicio
+
+     double vmInit, rssInit;              // Armazena a memória utilizada ao inicio da execucao
+     double vmEnd, rssEnd;                // Armazena a memória utilizada ao final da execucao
+     //process_mem_usage(vmInit, rssInit);  // Calcula a memoria utilizada e seta no inicio Only in linux
 
      std::vector<int> dimensions;
-     int **opMatriz;
-     int **locParentesis;
      int n;
 
      // Global Variables to store test results:
@@ -98,22 +93,22 @@ int main(int argc, char *argv[]) {
 
           std::cout << "\n- Use the following pattern to run the program properly on Windows:" << std::endl;
 
-          std::cout << "\n.\\dynamicProgMulMatrix.exe <path_to_instance_file> <algorithm_code> <print_type>" << std::endl;
+          std::cout << "\n.\\dynamicProgMulMatrix.exe <path_to_instance_file> <algorithm_code> <print_type> <print_sol>" << std::endl;
 
           std::cout << "\nWhere:" << std::endl;
 
           std::cout << " - Algorithm Code: use 1 for Brute Force and 2 for Dynamic Programming." << std::endl;
-          std::cout << " - Print Type: use 1 for easy terminal reading and 2 for csv output file formatting.\n"
-                    << std::endl;
+          std::cout << " - Print Type: use 1 for easy terminal reading and 2 for csv output file formatting" << std::endl;
+          std::cout << " - Print sol: use 1 to write the solution into a file" << std::endl;
 
           return 0;
      }
 
      if (argc > 1) {
           bool wasRead = readFile(argv[1], dimensions, &n);
-
+          
           if (wasRead) {
-               initMatrixes(opMatriz, locParentesis, n);
+               initMatrixes(n);
                std::string str(argv[2]);
 
                if (str == "1") {
@@ -123,10 +118,10 @@ int main(int argc, char *argv[]) {
                     instanceSize = dimensions.size() - 1;
 
                     for (int i = 0; i < numIterations; i++) {
-                         
+
                          stop_watch sw;
 
-                         int numOps = recursiveAlgo(opMatriz, dimensions, 1, n - 1);
+                         int numOps = recursiveAlgo(dimensions, 1, n - 1);
 
                          auto m = sw.elapsed_ns().count();
 
@@ -174,8 +169,11 @@ int main(int argc, char *argv[]) {
                     }
                }
 
-               // process_mem_usage(vmEnd, rssEnd);  // Calcula a memoria utilizada e seta no final
+               // process_mem_usage(vmEnd, rssEnd);  // Calcula a memoria utilizada e seta no final Only in linux
                // memorySpent = rssEnd - rssInit;    // Calcula a dif de memoria entre o final e no inicio
+
+               if(argc == 5 && std::string(argv[4]) == "1")
+                    writeSolution(instanceSize);
 
                for (int i = 0; i < n; i++) {
                     delete[] opMatriz[i];
@@ -185,14 +183,15 @@ int main(int argc, char *argv[]) {
                delete[] locParentesis;
           }
 
+          
+
           if (std::string(argv[3]) == "1") {
                printResults(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
           } else if (std::string(argv[3]) == "2") {
                resultsToCSV(numIterations, instanceSize, algorithm, numberOfOp, timeSpent, memorySpent);
-          } else {
+          } else
                std::cout << "No valid output method choosed. Please, check arguments." << std::endl;
-          }
-     }
+     }         
 
      return 0;
 }
