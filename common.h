@@ -5,14 +5,15 @@
 #include <chrono>
 #include <climits>
 #include <string>
+#include <cmath>
 #include "node.h"
 
 
 void initMatrixes( int** &opMatriz, int** &locParentesis, int size);
 bool readFile(char* fileName, std::vector<int> &dimensions, int* n);
 int recursiveAlgo(int** &opMatriz, std::vector<int> &p, int i, int j);
-void resultsToCSV(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, std::chrono::duration<double> timeSpent, double memorySpent);
-void printResults(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, std::chrono::duration<double> timeSpent, double memorySpent);
+void resultsToCSV(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, long long int timeSpent, double memorySpent);
+void printResults(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, long long int timeSpent, double memorySpent);
 
 // Instancia uma nova árvore
 void exemplo_arvore();

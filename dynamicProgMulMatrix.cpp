@@ -1,9 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include <string>
-
 #include "common.h"
-
 #include "windows.h"
 
 // TODO:->Fazer o nosso codigo
@@ -15,6 +13,57 @@
 // TODO:->executar os testes
 // TODO:->finalizar o relatorio
 
+
+struct stop_watch final
+{   
+    
+    stop_watch() : Start_(now()) {}
+    
+    std::chrono::seconds elapsed_s() const
+    {
+        using std::chrono::seconds;
+        return std::chrono::duration_cast<seconds>(elapsed());
+    }
+    
+    std::chrono::milliseconds elapsed_ms() const
+    {
+        using std::chrono::milliseconds;
+        return std::chrono::duration_cast<milliseconds>(elapsed());
+    }
+    
+    std::chrono::microseconds elapsed_us() const
+    {
+        using std::chrono::microseconds;
+        return std::chrono::duration_cast<microseconds>(elapsed());
+    }
+    
+    std::chrono::nanoseconds elapsed_ns() const
+    {
+        using std::chrono::nanoseconds;
+        return std::chrono::duration_cast<nanoseconds>(elapsed());
+    }
+    
+    void restart() { Start_ = now(); }
+    
+    stop_watch(const stop_watch&) = delete;
+    stop_watch& operator=(const stop_watch&) = delete;
+    
+private:
+    static std::chrono::high_resolution_clock::time_point now()
+    {
+        return std::chrono::high_resolution_clock::now();
+    }
+    
+    std::chrono::duration<double> elapsed() const
+    {
+        return (now() - Start_);
+    }
+    
+    std::chrono::high_resolution_clock::time_point Start_;
+};
+
+
+
 int main(int argc, char *argv[]) {
      std::vector<int> dimensions;
      int **opMatriz;
@@ -25,8 +74,8 @@ int main(int argc, char *argv[]) {
      int numIterations = 5;
      int instanceSize = 0;
      std::string algorithm = "";
-     int numberOfOp = 0;
-     std::chrono::duration<double> timeSpent;
+     int numberOfOp = 0; 
+     long long int timeSpent = 0;
      double memorySpent = 0.0;
 
      if (argc < 4) {
@@ -58,20 +107,17 @@ int main(int argc, char *argv[]) {
                     algorithm = "BruteForce";
                     instanceSize = dimensions.size() - 1;
 
-                    clock_t tStart;
-                    std::chrono::duration<double> elapsed_seconds;
 
                     for (int i = 0; i < numIterations; i++) {
-                         tStart = clock();
-                         auto start = std::chrono::steady_clock::now();
+
+                         stop_watch sw;
 
                          int numOps = recursiveAlgo(opMatriz, dimensions, 1, n - 1);
 
-                         auto end = std::chrono::steady_clock::now();
-                         elapsed_seconds = end - start;
+                         auto m = sw.elapsed_ns().count();
 
                          numberOfOp += opMatriz[1][n - 1];
-                         timeSpent += elapsed_seconds;
+                         timeSpent += m;
                          memorySpent += 0.0;
                     }
 
@@ -83,14 +129,10 @@ int main(int argc, char *argv[]) {
                     algorithm = "Dynamic Programming";
                     instanceSize = dimensions.size() - 1;
 
-                    clock_t tStart;
-                    std::chrono::duration<double> elapsed_seconds;
-
                     for (int i = 0; i < numIterations; i++) {
                          int j, min, q;
 
-                         tStart = clock();
-                         auto start = std::chrono::steady_clock::now();
+                         stop_watch sw;
 
                          for (int d = 1; d < n - 1; d++) {
                               for (int i = 1; i < n - d; i++) {
@@ -110,11 +152,11 @@ int main(int argc, char *argv[]) {
                               }
                          }
 
-                         auto end = std::chrono::steady_clock::now();
-                         elapsed_seconds = end - start;
+                         
+                         auto m = sw.elapsed_ns().count();
 
                          numberOfOp += opMatriz[1][n - 1];
-                         timeSpent += elapsed_seconds;
+                         timeSpent += m;
                          memorySpent += 0.0;
                     }
                }

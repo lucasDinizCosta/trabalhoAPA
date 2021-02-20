@@ -174,18 +174,18 @@ int recursiveAlgo(int **&opMatriz, std::vector<int> &p, int i, int j) {
      return opMatriz[i][j];
 }
 
-void resultsToCSV(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, std::chrono::duration<double> timeSpent, double memorySpent) {
+void resultsToCSV(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, long long int timeSpent, double memorySpent) {
      double averageNumOp = numberOfOp / numIterations;
-     double averageTimeSpent = timeSpent.count() / numIterations;
+     double averageTimeSpent = ((double)timeSpent / numIterations)/pow(10, 9);
      double averageMemSpent = memorySpent / numIterations;
 
      std::cout << algorithm.c_str() << ";" << std::to_string(numIterations) << ";" << std::to_string(instanceSize) << ";"
                << std::to_string(averageNumOp) << ";" << std::to_string(averageTimeSpent) << ";" << std::to_string(averageMemSpent) << ";" << std::endl;
 }
 
-void printResults(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, std::chrono::duration<double> timeSpent, double memorySpent) {
+void printResults(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, long long int timeSpent, double memorySpent) {
      double averageNumOp = numberOfOp / numIterations;
-     double averageTimeSpent = timeSpent.count() / numIterations;
+     double averageTimeSpent = ((double)timeSpent / numIterations)/pow(10, 9);
      double averageMemSpent = memorySpent / numIterations;
 
      std::cout << "\nMethod: " << algorithm.c_str() << std::endl;
