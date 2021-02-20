@@ -1,11 +1,11 @@
-#include "common.h"
+#include <unistd.h>
 
 #include <chrono>
 #include <fstream>
 #include <iostream>
 #include <string>
 
-#include <unistd.h>
+#include "common.h"
 
 // TODO:->Fazer o nosso codigo
 // TODO:->Fazer leitura das instancias - OK
@@ -15,6 +15,46 @@
 // TODO:->Fazer o algoritmo comparativo
 // TODO:->executar os testes
 // TODO:->finalizar o relatorio
+
+struct stop_watch final {
+     stop_watch() : Start_(now()) {}
+
+     std::chrono::seconds elapsed_s() const {
+          using std::chrono::seconds;
+          return std::chrono::duration_cast<seconds>(elapsed());
+     }
+
+     std::chrono::milliseconds elapsed_ms() const {
+          using std::chrono::milliseconds;
+          return std::chrono::duration_cast<milliseconds>(elapsed());
+     }
+
+     std::chrono::microseconds elapsed_us() const {
+          using std::chrono::microseconds;
+          return std::chrono::duration_cast<microseconds>(elapsed());
+     }
+
+     std::chrono::nanoseconds elapsed_ns() const {
+          using std::chrono::nanoseconds;
+          return std::chrono::duration_cast<nanoseconds>(elapsed());
+     }
+
+     void restart() { Start_ = now(); }
+
+     stop_watch(const stop_watch &) = delete;
+     stop_watch &operator=(const stop_watch &) = delete;
+
+    private:
+     static std::chrono::high_resolution_clock::time_point now() {
+          return std::chrono::high_resolution_clock::now();
+     }
+
+     std::chrono::duration<double> elapsed() const {
+          return (now() - Start_);
+     }
+
+     std::chrono::high_resolution_clock::time_point Start_;
+};
 
 // Funcao Auxiliar para Calcular Memória Utilizada (Apenas no Linux)
 void process_mem_usage(double &vm_usage, double &resident_set) {
@@ -36,10 +76,9 @@ void process_mem_usage(double &vm_usage, double &resident_set) {
 }
 
 int main(int argc, char *argv[]) {
-
-     double vmInit, rssInit; // Armazena a memória utilizada ao inicio da execucao
-     double vmEnd, rssEnd; // Armazena a memória utilizada ao final da execucao
-     process_mem_usage(vmInit, rssInit); // Calcula a memoria utilizada e seta no inicio
+     double vmInit, rssInit;              // Armazena a memória utilizada ao inicio da execucao
+     double vmEnd, rssEnd;                // Armazena a memória utilizada ao final da execucao
+     process_mem_usage(vmInit, rssInit);  // Calcula a memoria utilizada e seta no inicio
 
      std::vector<int> dimensions;
      int **opMatriz;
@@ -51,7 +90,7 @@ int main(int argc, char *argv[]) {
      int instanceSize = 0;
      std::string algorithm = "";
      int numberOfOp = 0;
-     std::chrono::duration<double> timeSpent;
+     long long int timeSpent = 0;
      double memorySpent = 0.0;
 
      if (argc < 4) {
@@ -87,16 +126,14 @@ int main(int argc, char *argv[]) {
                     std::chrono::duration<double> elapsed_seconds;
 
                     for (int i = 0; i < numIterations; i++) {
-                         tStart = clock();
-                         auto start = std::chrono::steady_clock::now();
+                         stop_watch sw;
 
                          int numOps = recursiveAlgo(opMatriz, dimensions, 1, n - 1);
 
-                         auto end = std::chrono::steady_clock::now();
-                         elapsed_seconds = end - start;
+                         auto m = sw.elapsed_ns().count();
 
                          numberOfOp += opMatriz[1][n - 1];
-                         timeSpent += elapsed_seconds;
+                         timeSpent += m;
                          memorySpent += 0.0;
                     }
 
@@ -108,14 +145,10 @@ int main(int argc, char *argv[]) {
                     algorithm = "Dynamic Programming";
                     instanceSize = dimensions.size() - 1;
 
-                    clock_t tStart;
-                    std::chrono::duration<double> elapsed_seconds;
-
                     for (int i = 0; i < numIterations; i++) {
                          int j, min, q;
 
-                         tStart = clock();
-                         auto start = std::chrono::steady_clock::now();
+                         stop_watch sw;
 
                          for (int d = 1; d < n - 1; d++) {
                               for (int i = 1; i < n - d; i++) {
@@ -135,17 +168,16 @@ int main(int argc, char *argv[]) {
                               }
                          }
 
-                         auto end = std::chrono::steady_clock::now();
-                         elapsed_seconds = end - start;
+                         auto m = sw.elapsed_ns().count();
 
                          numberOfOp += opMatriz[1][n - 1];
-                         timeSpent += elapsed_seconds;
-
+                         timeSpent += m;
+                         memorySpent += 0.0;
                     }
                }
 
-               process_mem_usage(vmEnd, rssEnd);// Calcula a memoria utilizada e seta no final
-               memorySpent = rssEnd - rssInit; // Calcula a dif de memoria entre o final e no inicio
+               process_mem_usage(vmEnd, rssEnd);  // Calcula a memoria utilizada e seta no final
+               memorySpent = rssEnd - rssInit;    // Calcula a dif de memoria entre o final e no inicio
 
                for (int i = 0; i < n; i++) {
                     delete[] opMatriz[i];
