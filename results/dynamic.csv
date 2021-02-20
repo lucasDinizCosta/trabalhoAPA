@@ -1,0 +1,5 @@
+method;numIt;instanceSize;avgNumOp;avgTime;avgMem;
+method;numIt;instanceSize;avgNumOp;avgTime;avgMem;
+Dynamic Programming;5;1000;887987.000000;1.704272;1908.800000;
+Dynamic Programming;5;2000;1892794.000000;15.713660;6596.800000;
+Dynamic Programming;5;3000;2801405.000000;66.405449;14409.600000;
