@@ -2,7 +2,7 @@
 #include <queue>
 
 void initMatrixes(int size) {
-     
+
      opMatriz = new int *[size];
 
      for (int i = 0; i < size; i++)
@@ -21,7 +21,7 @@ void initMatrixes(int size) {
      }
 }
 
-bool readFile(char *fileName, std::vector<int> &dimensions, int *n) {
+bool readFile(char *fileName, int *n) {
      //std::cout << "File name: " << fileName << std::endl;
 
      std::ifstream instance;
@@ -53,59 +53,40 @@ bool readFile(char *fileName, std::vector<int> &dimensions, int *n) {
      return true;
 }
 
-// Função auxiliar de impressão da árvore.
-// Recebe como parametro uma string com o que deve ser impresso
-// e um valor inteiro b, que é responsável por aplicar um espaçamento de impressão
-void imprimeNo(std::string msg, int b) {
-     for (int i = 0; i < b; i++) {
-          printf("   ");
-     }
 
-     std::cout << msg << std::endl;
-}
-
-void delTree(Node* root){
-
+void delTree(Node *root) {
      root = free(root);
-
 }
 
-// Função recursiva para percorrer a árvore binária.
-Node* free(Node *p) {
-     
-     if (p != NULL)
-     {
-          p->setLeft( free(p->getLeft()) );
-          p->setRight( free(p->getRight()) );
+Node *free(Node *p) {
+
+     if (p != NULL) {
+          p->setLeft(free(p->getLeft()));
+          p->setRight(free(p->getRight()));
           delete p;
           p = NULL;
      }
-     
+
      return NULL;
 }
 
+void buildTree(Node *node, int numLeaves, int size) {
 
-void buildTree(Node* node, int numLeaves, int size){
-
-     if(node == NULL)
+     if (node == NULL)
           return;
-     
-     Node* aux = node;
+
+     Node *aux = node;
      int i = aux->getStart();
      int j = aux->getEnd();
      int value;
 
-
-     if (numLeaves != size){
-     
-          if (i != j){
-
+     if (numLeaves != size) {
+          if (i != j) {
                value = locParentesis[i][j];
 
                aux->setLeft(new Node(aux->getStart(), value, aux));
                aux->setRight(new Node(value + 1, aux->getEnd(), aux));
-
-          }else{
+          } else {
                aux->setIsLeaf(true);
                numLeaves++;
           }
@@ -115,8 +96,11 @@ void buildTree(Node* node, int numLeaves, int size){
      }
 }
 
-// Instancia uma nova árvore
-void writeSolution(int size) {
+
+void writeSolutionTree(int size) {
+
+     solFile.open("solution.txt", std::ios_base::app);
+
 
      int i = 1;
      int j = size;
@@ -125,28 +109,30 @@ void writeSolution(int size) {
      Node *root = new Node(i, j, true);
      buildTree(root, numLeaves, size);
 
-
-     std::vector<Node *> v;
+     std::vector<Node *> v; //Vetor que armazena os nos
      int it = 0;
-     std::queue<Node *> q;
+     std::queue<Node *> q; //Fila para percorrer a arvore em largura
      q.push(root);
      int level = 0;
 
+     //Busca em largura na arvore
      while (q.size() > 0) {
           Node *n = q.front();
           v.push_back(n);
           q.pop();
 
-          if(level == v[it]->getLevel()){
+          if (level == v[it]->getLevel()) {
                std::string valNode = std::to_string(n->getStart()) + "-" + std::to_string(n->getEnd());
-               std::cout << ", " << valNode << "(" << std::to_string(n->getLevel()) << ")" << " ";
-          }else{
-               std::cout << std::endl;
+               solFile << ", " << valNode << "(" << std::to_string(n->getLevel()) << ")"
+                         << " ";
+          } else {
+               solFile << std::endl;
                std::string valNode = std::to_string(n->getStart()) + "-" + std::to_string(n->getEnd());
-               std::cout << valNode << "(" << std::to_string(n->getLevel()) << ")" << " ";
+               solFile << valNode << "(" << std::to_string(n->getLevel()) << ")"
+                         << " ";
                level += 1;
           }
-               
+
           it++;
 
           if (n->getLeft() != nullptr) {
@@ -157,11 +143,13 @@ void writeSolution(int size) {
           }
      }
 
-
+     solFile << std::endl;
      delTree(root);
 }
 
-int recursiveAlgo(std::vector<int> &p, int i, int j) {
+int recursiveAlgo(int i, int j) {
+
+
      int q1;
      int q2;
      int q;
@@ -172,11 +160,11 @@ int recursiveAlgo(std::vector<int> &p, int i, int j) {
      opMatriz[i][j] = INT_MAX;
 
      for (int k = i; k <= j - 1; k++) {
-          q1 = recursiveAlgo(p, i, k);
-          q2 = recursiveAlgo(p, k + 1, j);
-          q = q1 + p[i - 1] * p[k] * p[j] + q2;
+          q1 = recursiveAlgo(i, k);
+          q2 = recursiveAlgo(k + 1, j);
+          q = q1 + + q2 + dimensions[i - 1] * dimensions[k] * dimensions[j] ;
 
-          if (q < opMatriz[i][j]){
+          if (q < opMatriz[i][j]) {
                opMatriz[i][j] = q;
                locParentesis[i][j] = k;
           }
@@ -185,9 +173,35 @@ int recursiveAlgo(std::vector<int> &p, int i, int j) {
      return opMatriz[i][j];
 }
 
+int dynamicAlgo(int n) {
+
+
+     int j, min, q;
+
+     for (int d = 1; d < n - 1; d++) { 
+          for (int i = 1; i < n - d; i++) {
+               j = i + d;
+               min = INT_MAX;
+
+               for (int k = i; k <= j - 1; k++) {
+                    q = opMatriz[i][k] + opMatriz[k + 1][j] + dimensions[i - 1] * dimensions[k] * dimensions[j];
+
+                    if (q < min) {
+                         min = q;
+                         locParentesis[i][j] = k;
+                    }
+               }
+
+               opMatriz[i][j] = min;
+          }
+     }
+
+     return opMatriz[1][n - 1];
+}
+
 void resultsToCSV(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, long long int timeSpent, double memorySpent) {
      double averageNumOp = numberOfOp / numIterations;
-     double averageTimeSpent = ((double)timeSpent / numIterations)/pow(10, 9);
+     double averageTimeSpent = ((double)timeSpent / numIterations) / pow(10, 9);
      double averageMemSpent = memorySpent / numIterations;
 
      std::cout << algorithm.c_str() << ";" << std::to_string(numIterations) << ";" << std::to_string(instanceSize) << ";"
@@ -196,7 +210,7 @@ void resultsToCSV(int numIterations, int instanceSize, std::string algorithm, in
 
 void printResults(int numIterations, int instanceSize, std::string algorithm, int numberOfOp, long long int timeSpent, double memorySpent) {
      double averageNumOp = numberOfOp / numIterations;
-     double averageTimeSpent = ((double)timeSpent / numIterations)/pow(10, 9);
+     double averageTimeSpent = ((double)timeSpent / numIterations) / pow(10, 9);
      double averageMemSpent = memorySpent / numIterations;
 
      std::cout << "\nMethod: " << algorithm.c_str() << std::endl;
@@ -204,5 +218,21 @@ void printResults(int numIterations, int instanceSize, std::string algorithm, in
      std::cout << "Instance Size: " << std::to_string(instanceSize) << std::endl;
      std::cout << "Average Number of Operations: " << std::to_string(averageNumOp) << std::endl;
      std::cout << "Average Time Spent: " << std::to_string(averageTimeSpent) << std::endl;
-     std::cout << "Average Memory Spent: " << std::to_string(averageMemSpent) << "\n" << std::endl;
+     std::cout << "Average Memory Spent: " << std::to_string(averageMemSpent) << "\n"
+               << std::endl;
 }
+
+void writeSolutionParentesis(int i, int j){
+
+
+          if (i == j)
+               solFile << "M" << i;
+          else{
+               solFile << "(";
+               writeSolutionParentesis(i, locParentesis[i][j]);
+               writeSolutionParentesis(locParentesis[i][j] + 1 , j);
+               solFile << ")";
+          }
+          
+}
+ 

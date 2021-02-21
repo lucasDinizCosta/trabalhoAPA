@@ -4,6 +4,7 @@
 class Node {
 
 private:
+
     int start;
     int end;
     Node *left;
