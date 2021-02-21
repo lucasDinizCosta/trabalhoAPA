@@ -25,7 +25,6 @@
 
 
 ///Variáveis globais das estruturas em comum
-
 int **opMatriz; //Matriz de memoizacao
 int **locParentesis; //Matriz que guarda a posição dos parenteses para montar a solucao a posteriori
 std::vector<int> dimensions; //Vetor que armazena as dimensoes das matrizes, desconsiderando a segunda aparicao da dimensao em comum entre duas matrizes consecutivas
@@ -64,10 +63,14 @@ int main(int argc, char *argv[]) {
      }
 
      if (argc > 1) {
+
+          
           bool wasRead = readFile(argv[1], &n);
           
+          //Verifica se o arquivo foi lido corretamente
           if (wasRead) {
-
+               
+               //Inicia as matrizes de operacao e posicao dos parenteses
                initMatrixes(n);
                std::string str(argv[2]);
 
@@ -81,7 +84,7 @@ int main(int argc, char *argv[]) {
 
                          stop_watch sw;
 
-                         int numOps = recursiveAlgo(1, n - 1);
+                         int numOps = recursiveAlgo(1, n - 1); //Execura o algoritmo
 
                          auto m = sw.elapsed_ns().count();
 
@@ -102,7 +105,7 @@ int main(int argc, char *argv[]) {
 
                          stop_watch sw;
                          
-                         int numOps = dynamicAlgo(n);
+                         int numOps = dynamicAlgo(n); //Execura o algoritmo
 
                          auto m = sw.elapsed_ns().count();
 
