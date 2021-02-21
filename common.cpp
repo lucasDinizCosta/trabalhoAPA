@@ -99,7 +99,7 @@ void buildTree(Node *node, int numLeaves, int size) {
 
 void writeSolutionTree(int size) {
 
-     solFile.open("solution.txt", std::ios_base::app);
+     solFile.open("solution.txt", std::ios_base::trunc);
 
 
      int i = 1;
@@ -149,27 +149,38 @@ void writeSolutionTree(int size) {
 
 int recursiveAlgo(int i, int j) {
 
-
      int q1;
      int q2;
      int q;
 
+     //Se for a diagonal principal retorna 0
      if (i == j)
           return 0;
 
      opMatriz[i][j] = INT_MAX;
-
+     
+     //Para cada valor de k entre i e j-1
+     //Chama recursivamente a funcao para os dois
+     //subproblemas divididos em i ate k e k+1 ate j.
      for (int k = i; k <= j - 1; k++) {
+
           q1 = recursiveAlgo(i, k);
           q2 = recursiveAlgo(k + 1, j);
-          q = q1 + + q2 + dimensions[i - 1] * dimensions[k] * dimensions[j] ;
+          q = q1 + q2 + dimensions[i - 1] * dimensions[k] * dimensions[j] ;
 
+          //Testa se eh menor que o valor ja armazenado nessa posicao
           if (q < opMatriz[i][j]) {
+
+               //Atualiza o valor da matriz em i,j
                opMatriz[i][j] = q;
+
+               //Registra o k, para construir a solucao depois
                locParentesis[i][j] = k;
           }
      }
 
+     //Retorna o valor minimo de operacoes de multiplicaçao
+     //entre i e j
      return opMatriz[i][j];
 }
 
@@ -178,24 +189,34 @@ int dynamicAlgo(int n) {
 
      int j, min, q;
 
-     for (int d = 1; d < n - 1; d++) { 
-          for (int i = 1; i < n - d; i++) {
-               j = i + d;
+     for (int d = 1; d < n - 1; d++) { //Para conseguir percorrer na diagonal de cima para baixo
+          for (int i = 1; i < n - d; i++) { //Identifica a linha atual
+               j = i + d; //Valor ajustado de j, para ficar na diagonal certa
                min = INT_MAX;
 
-               for (int k = i; k <= j - 1; k++) {
+               for (int k = i; k <= j - 1; k++) { //Percorrer os valores possíveis de k entre i e j-1
+
+                    //Recebe o numero das operaçoes de multiplicaçao entre os dois subproblemas armazenados na matriz
+                    //de memoizacao opMatriz,  opMatriz[i][k], opMatriz[k + 1][j] + a multiplicacao entre as duas
                     q = opMatriz[i][k] + opMatriz[k + 1][j] + dimensions[i - 1] * dimensions[k] * dimensions[j];
 
+                    //Testa se eh menor que o valor ja armazenado nessa posicao
                     if (q < min) {
                          min = q;
+
+                         //Registra o k, para construir a solucao depois
                          locParentesis[i][j] = k;
                     }
                }
 
+               //Atualiza o valor da matriz em i,j
                opMatriz[i][j] = min;
           }
      }
-
+     
+     //Retorna a ultima ponta superior direita da matriz
+     //Onde consta o numero minimo de operacoes de multiplicacao
+     //entre 1 e n-1, que eh igual a 1 ate o tamanho da instancia
      return opMatriz[1][n - 1];
 }
 
